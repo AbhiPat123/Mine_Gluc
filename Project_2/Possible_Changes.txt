@@ -1,0 +1,25 @@
+- We see if tm to tm+2hrs (within insulin data) has any tp, do we need to see it this way:
+	- get tm
+	- go to CGMData and get ealliest DT greater than tm
+	- find tm+2hrs in CGMData
+	- come back to Ins data and check the range found in CGMData to get valid meal data
+	This just sounds too much and dont think it is expected.
+
+- Considering getting start time values in insulin. Then, get CGMData time value and add +2hrs30min to that
+
+- The chosen mask is <= 30min and > 2hrs
+	- exclude the time exactly at tm+2hrs (gives more samples to train)
+
+- Have only those meal data/no meal data where the length is 30 (with or without NaN) and the size without NaN is >= 80%*30
+
+- No Meal data is where it doesnt collapse with 2HOUR meal data stretches (NOT WITH 30min before)
+
+FOR FEATURE EXTRACTORS:
+
+- currently taking indices for time (could take it *5 to get the minutes value)
+
+- fft or rfft (sticking to rfft for now)
+
+
+FOR THE CONDITIONS - check extractMDDT()
+FOR THE INTERVALS - check getMDFeatMat()

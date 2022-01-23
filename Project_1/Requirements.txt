@@ -1,0 +1,62 @@
+README
+
+Steps to Execute Code:
+
+1.	Ensure that numpy and pandas are installed - the main.py file uses sys, numpy and pandas
+2.	Change directory to this folder in command prompt
+3.	Run the command:
+	python main.py ./Project-1-Files/CGMData.csv ./Project-1-Files/InsulinData.csv
+	(this is also included as first line in main.py)
+4.	The program should automatically create the Results.csv in this directory itself
+
+Steps taken to fulfill requirements:
+
+1.	Using the sys package, get the CGMData and InsulinData file paths from command line arguments
+2.	The files are in Project-1-Files and thus the command needs to include the directory change as shown below:
+	- python main.py ./Project-1-Files/CGMData.csv ./Project-1-Files/InsulinData.csv
+3.	Read both the data using pd.read_csv() and parse_dates argument to convert date and time columns to DateTime type
+4.	Extract only the DateTime and Sensor Glucose (mg/dL) columns
+5.	Create 6 columns for each of the 6 types of Hyperglycemia as mentioned in the problem statement:
+	- the column type for each of these is boolean
+6.	Look into the Insulin Data's Alarm column and search for the earliest 'AUTO MODE ACTIVE PLGM OFF' message:
+	- uses idxmin() to get the ID of the minimum date for 'AUTO MODE ACTIVE PLGM OFF'
+	- use that ID to get the DateTime of that message
+7.	Filter the data by removing entire day of 20% or higher missing values:
+	- this uses pd.Grouper() to group by days with frequency of 1 day
+	- also uses transform along with count() to check amount of data is between 231 and 288
+8.	Disect the CGMData based on the Auto On DateTime extracted in step 7 - two parts 'Man' for Manual and 'Aut' for Auto
+9.	For each of the Manual and Auto sections, create 3 DataFrames for Overnight, Daytime and WholeDay segments:
+	- creates total 6 copies from the original Man and Aut DataFrames in step 8
+	- uses df.dt.hour property of DateTime columns to separate between Overnight (0:00:00 to 5:59:59) and Daytime (6:00:00 to 23:59:59)
+10.	Create two variables storing Manual and Auto values:
+	- Each of these variables is a list that stores 18 values
+	- Order of the 18 values is: (going from index 0 to index 17)
+		Overnight Percentage time in hyperglycemia (CGM > 180 mg/dL)
+		Overnight percentage of time in hyperglycemia critical (CGM > 250 mg/dL)
+		Overnight percentage time in range (CGM >= 70 mg/dL and CGM <= 180 mg/dL)
+		Overnight percentage time in range secondary (CGM >= 70 mg/dL and CGM <= 150 mg/dL)
+		Overnight percentage time in hypoglycemia level 1 (CGM < 70 mg/dL)
+		Overnight percentage time in hypoglycemia level 2 (CGM < 54 mg/dL)
+		Daytime Percentage time in hyperglycemia (CGM > 180 mg/dL)
+		Daytime percentage of time in hyperglycemia critical (CGM > 250 mg/dL)
+		Daytime percentage time in range (CGM >= 70 mg/dL and CGM <= 180 mg/dL)
+		Daytime percentage time in range secondary (CGM >= 70 mg/dL and CGM <= 150 mg/dL)
+		Daytime percentage time in hypoglycemia level 1 (CGM < 70 mg/dL)
+		Daytime percentage time in hypoglycemia level 2 (CGM < 54 mg/dL)
+		Whole Day Percentage time in hyperglycemia (CGM > 180 mg/dL)
+		Whole day percentage of time in hyperglycemia critical (CGM > 250 mg/dL)
+		Whole day percentage time in range (CGM >= 70 mg/dL and CGM <= 180 mg/dL)
+		Whole day percentage time in range secondary (CGM >= 70 mg/dL and CGM <= 150 mg/dL)
+		Whole day percentage time in hypoglycemia level 1 (CGM < 70 mg/dL)
+		Whole Day percentage time in hypoglycemia level 2 (CGM < 54 mg/dL)
+11.	Using np.row_stack create a results_matrix and store this in Results.csv using np.savetxt
+
+NOTE:
+	- The Project-1-Files folder is not included as it is not mentioned in the problem statement
+	- To handle missing/NaN values I remove the entire day of data
+	- Results.csv gets saved in the same folder/directory as the main.py file
+	- Results.csv only has a 2x18 matrix of numbers as per the result (no column or row names)	
+	
+Link to resource(s) [if/as needed]
+
+Further step-by-step instructions if/as needed
